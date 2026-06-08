@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <malloc.h>
 
 #include "Game enums.h"
 #include "Helpers.h"
@@ -52,7 +53,6 @@ Tetris new_tetris()
 	for (int i = 0; i < ROWS; i++)
 	{
 		t.board[i] = (TetrisCell*)malloc(COLS * sizeof(TetrisCell));
-
 		for (int j = 0; j < COLS; j++)
 			t.board[i][j] = Empty;
 	}
@@ -81,9 +81,8 @@ BoolBoardTuple IsAbleToMove(TetrisCell** board) {
 	for (int row = ROWS - 1; row >= 0; row--) {
 		for (int col = 0; col < COLS; col++) {
 			if (tmp[row][col] == Moving) {
-				if (row == ROWS - 1 || tmp[row + 1][col] == Full) {
+				if (row == ROWS - 1 || tmp[row + 1][col] == Full) 
 					return (BoolBoardTuple) { tmp, false };
-				}
 				else
 				{
 					tmp[row + 1][col] = Moving;
@@ -164,12 +163,8 @@ int DeleteLine(TetrisCell*** board) {
 
 		deleted++;
 		for (int r = row; r > 0; r--)
-		{
 			for (int c = 0; c < COLS; c++)
-			{
 				(*board)[r][c] = (*board)[r - 1][c];
-			}
-		}
 
 		for (int c = 0; c < COLS; c++)
 			(*board)[0][c] = Empty;
