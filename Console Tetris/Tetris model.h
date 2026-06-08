@@ -82,7 +82,7 @@ BoolBoardTuple IsAbleToMove(TetrisCell** board) {
 		for (int col = 0; col < COLS; col++) {
 			if (tmp[row][col] == Moving) {
 				if (row == ROWS - 1 || tmp[row + 1][col] == Full) {
-					return new_BoolBoardTuple(tmp, false);
+					return (BoolBoardTuple) { tmp, false };
 				}
 				else
 				{
@@ -93,7 +93,7 @@ BoolBoardTuple IsAbleToMove(TetrisCell** board) {
 		}
 	}
 
-	return new_BoolBoardTuple(tmp, true);
+	return (BoolBoardTuple) { tmp, true };
 }
 
 

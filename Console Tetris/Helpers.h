@@ -24,12 +24,5 @@ typedef struct BoolBoardTuple
 	bool is_can_move;
 } BoolBoardTuple;
 
-BoolBoardTuple new_BoolBoardTuple(TetrisCell** board, bool is_can_move) {
-	BoolBoardTuple bbt;
-	bbt.board = board;
-	bbt.is_can_move = is_can_move;
-	return bbt;
-}
-
 
 #endif // HELPERS_H

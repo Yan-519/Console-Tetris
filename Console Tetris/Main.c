@@ -9,7 +9,7 @@
 
 bool IsInUse = false;
 
-void Render(Tetris game)
+static void Render(Tetris game)
 {
 	if (IsInUse) return;
 	IsInUse = true;
@@ -50,7 +50,7 @@ void Render(Tetris game)
 	IsInUse = false;
 }
 
-int thread_worker(void* arg) {
+static int thread_worker(void* arg) {
 	Tetris* game = (Tetris*)arg;
 
 	clock_t last = clock();
