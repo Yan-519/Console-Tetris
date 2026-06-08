@@ -11,12 +11,11 @@ bool IsInUse = false;
 
 void Render(Tetris game)
 {
-	if (IsInUse)
-		return;
-
+	if (IsInUse) return;
 	IsInUse = true;
 
-	printf("\033[H\033[2J");
+	printf("\033[1;1H");
+
 	TetrisCell** board = game.board;
 
 	for (int r = 0; r < ROWS; r++)
@@ -46,6 +45,7 @@ void Render(Tetris game)
 	for (int i = 0; i < COLS * 2; i++)
 		printf("-");
 	printf("+\n");
+	fflush(stdout);
 
 	IsInUse = false;
 }
@@ -73,6 +73,9 @@ int main()
 	printf("Threads are not supported by this compiler.\n");
 	return 1;
 #endif
+
+	printf("\033[?25l");
+	printf("\033[2J");
 
 	srand(time(NULL));
 	thrd_t thread_id;
