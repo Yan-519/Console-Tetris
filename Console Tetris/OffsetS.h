@@ -1,10 +1,10 @@
 #ifndef OFFSET_H
 #define OFFSET_H
 
-#include "Helpers.h"
 #include "Game enums.h"
+#include "Helpers.h"
 
-static const Point rotation[SHAPES_COUNT-1][SHAPES_COUNT][SHAPES_SIZE] =
+static const Point rotation[SHAPES_COUNT - 1][SHAPES_COUNT][SHAPES_SIZE] =
 {
 	// I 
 	{
@@ -95,7 +95,7 @@ static const Point initialazation[SHAPES_COUNT][SHAPES_SIZE] = {
 	},
 	// O
 	{
-		{ 0, 4 },
+		{0, 4},
 		{0, 5},
 		{1, 4},
 		{1, 5}
