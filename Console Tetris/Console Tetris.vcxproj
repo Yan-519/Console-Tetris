@@ -144,7 +144,7 @@
   <ItemGroup>
     <ClInclude Include="Game enums.h" />
     <ClInclude Include="Helpers.h" />
-    <ClInclude Include="OffsetS.h" />
+    <ClInclude Include="Offsets.h" />
     <ClInclude Include="Tetris model.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -28,7 +28,7 @@ typedef struct Tetris
 
 bool GenerateShape(Tetris* game) {
 	Shape new_shape = (Shape)(rand() % SHAPES_COUNT);
-	Point *p = initialazation[new_shape];
+	Point* p = initialazation[new_shape];
 
 	for (int i = 0; i < SHAPES_SIZE; i++)
 		if ((*game).board[p[i].row][p[i].col] == Full)
@@ -332,8 +332,7 @@ void Rotate(Tetris* game)
 			(*game).current_rotation == first && rowMin > 0 && rowMax < 18 ||
 			(*game).current_rotation == second && colMin > 1 && colMax < 9 ||
 			(*game).current_rotation == third && rowMin > 1 && rowMax < 19 ||
-			(*game).current_rotation == fourth && colMin > 0 && colMax < 8
-			)
+			(*game).current_rotation == fourth && colMin > 0 && colMax < 8)
 			RotateShape(game, rotation[(*game).current_shape][(*game).current_rotation]);
 	}
 	else if (

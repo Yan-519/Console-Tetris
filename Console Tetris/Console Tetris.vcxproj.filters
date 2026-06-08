@@ -29,7 +29,7 @@
     <ClInclude Include="Tetris model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OffsetS.h">
+    <ClInclude Include="Offsets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

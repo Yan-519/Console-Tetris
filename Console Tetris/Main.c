@@ -69,7 +69,7 @@ int thread_worker(void* arg) {
 int main()
 {
 #ifdef __STDC_NO_THREADS__
-	printf("Standard C11 threads are not supported by this compiler.\n");
+	printf("Threads are not supported by this compiler.\n");
 	return 1;
 #endif
 
@@ -113,7 +113,6 @@ int main()
 
 	int thread_result;
 	thrd_join(thread_id, &thread_result);
-
 
 	return 0;
 }
