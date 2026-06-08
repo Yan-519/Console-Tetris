@@ -1,9 +1,9 @@
 #ifndef TETRIS_MODEL_H
 #define TETRIS_MODEL_H
 
+#include <malloc.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <malloc.h>
 
 #include "Game enums.h"
 #include "Helpers.h"
@@ -81,7 +81,7 @@ BoolBoardTuple IsAbleToMove(TetrisCell** board) {
 	for (int row = ROWS - 1; row >= 0; row--) {
 		for (int col = 0; col < COLS; col++) {
 			if (tmp[row][col] == Moving) {
-				if (row == ROWS - 1 || tmp[row + 1][col] == Full) 
+				if (row == ROWS - 1 || tmp[row + 1][col] == Full)
 					return (BoolBoardTuple) { tmp, false };
 				else
 				{
@@ -321,17 +321,17 @@ void Rotate(Tetris* game)
 	if ((*game).current_shape == I) // special range
 	{
 		if (
-			(*game).current_rotation == first && rowMin > 0 && rowMax < 18 ||
-			(*game).current_rotation == second && colMin > 1 && colMax < 9 ||
-			(*game).current_rotation == third && rowMin > 1 && rowMax < 19 ||
-			(*game).current_rotation == fourth && colMin > 0 && colMax < 8)
+			(*game).current_rotation == first && 0 < rowMin && rowMax < ROWS - 2 ||
+			(*game).current_rotation == second && 1 < colMin && colMax < COLS - 1 ||
+			(*game).current_rotation == third && 1 < rowMin && rowMax < ROWS - 1 ||
+			(*game).current_rotation == fourth && 0 < colMin && colMax < COLS - 2)
 			RotateShape(game, rotation[(*game).current_shape][(*game).current_rotation]);
 	}
 	else if (
-		(*game).current_rotation == first && rowMax < 19 ||
+		(*game).current_rotation == first && rowMax < ROWS - 1 ||
 		(*game).current_rotation == second && 0 < colMin ||
 		(*game).current_rotation == third && 0 < rowMin ||
-		(*game).current_rotation == fourth && colMax < 9)
+		(*game).current_rotation == fourth && colMax < COLS - 1)
 		RotateShape(game, rotation[(*game).current_shape][(*game).current_rotation]);
 }
 
