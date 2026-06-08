@@ -106,6 +106,12 @@ void AfterHiteBottom(Tetris* game) {
 
 void Down(Tetris* game) {
 	BoolBoardTuple bbt = IsAbleToMove((*game).board);
+	if (bbt.is_can_move)
+		(*game).board = bbt.board;
+}
+
+void TimerDown(Tetris* game) {
+	BoolBoardTuple bbt = IsAbleToMove((*game).board);
 
 	if (bbt.is_can_move)
 		(*game).board = bbt.board;

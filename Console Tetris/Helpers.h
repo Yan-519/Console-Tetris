@@ -10,12 +10,6 @@ typedef struct Point
 	short row, col;
 } Point;
 
-typedef struct BoolBoardTuple
-{
-	TetrisCell** board;
-	bool is_can_move;
-} BoolBoardTuple;
-
 Point new_Point(short row, short col)
 {
 	Point p;
@@ -31,6 +25,12 @@ Point Add(Point a, Point b) {
 bool Equals(Point a, Point b) {
 	return a.row == b.row && a.col == b.col;
 }
+
+typedef struct BoolBoardTuple
+{
+	TetrisCell** board;
+	bool is_can_move;
+} BoolBoardTuple;
 
 BoolBoardTuple new_BoolBoardTuple(TetrisCell** board, bool is_can_move) {
 	BoolBoardTuple bbt;

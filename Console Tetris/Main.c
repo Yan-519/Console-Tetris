@@ -57,7 +57,7 @@ int thread_worker(void* arg) {
 	while (!(*game).game_over) {
 		if (clock() - last >= INTRVAL) {
 			last = clock();
-			Down(game);
+			TimerDown(game);
 			Render((*game));
 		}
 	}
@@ -83,14 +83,14 @@ int main()
 		fprintf(stderr, "Error creating thread\n");
 		return 1;
 	}
-	char ch;
+
 	while (!game.game_over) {
-		ch = _getch();
-		if (ch == ' ') {
+		switch (_getch()) {
+		case ' ':
 			FullDown(&game);
 			Render(game);
-		}
-		else switch (ch) {
+			break;
+
 		case 72:
 			Rotate(&game);
 			Render(game);
