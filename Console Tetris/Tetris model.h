@@ -207,7 +207,6 @@ void Left(TetrisCell*** board)
 
 	if (is_left)
 		(*board) = tmp;
-
 }
 
 void Right(TetrisCell*** board)
@@ -237,9 +236,7 @@ void Right(TetrisCell*** board)
 
 	if (is_right)
 		(*board) = tmp;
-
 }
-
 
 void RotateShape(Tetris* game, Point* indexes)
 {
@@ -248,9 +245,9 @@ void RotateShape(Tetris* game, Point* indexes)
 	for (int row = 0; row < ROWS; row++)
 		for (int col = 0; col < COLS; col++)
 			if ((*game).board[row][col] == Moving)
-				original[idx++] = new_Point(row, col);
+				original[idx++] = (Point){ row, col };
 
-	if (idx != 4)
+	if (idx != SHAPES_SIZE)
 		return;
 
 	Point* targets = malloc(sizeof(Point) * SHAPES_SIZE);
@@ -269,7 +266,7 @@ void RotateShape(Tetris* game, Point* indexes)
 	{
 		Point t = targets[i];
 
-		for (int j = i + 1; j < 4; j++)
+		for (int j = i + 1; j < SHAPES_SIZE; j++)
 			if (Equals(t, targets[j]))
 				return;
 
@@ -290,7 +287,7 @@ void RotateShape(Tetris* game, Point* indexes)
 		tmp[targets[i].row][targets[i].col] = Moving;
 
 	(*game).board = tmp;
-	(*game).current_rotation = (Rotation)(((int)(*game).current_rotation + 1) % 4);
+	(*game).current_rotation = (Rotation)(((int)(*game).current_rotation + 1) % ROTATIONS_COUNT);
 }
 
 
@@ -341,11 +338,6 @@ void Rotate(Tetris* game)
 		(*game).current_rotation == third && 0 < rowMin ||
 		(*game).current_rotation == fourth && colMax < 9)
 		RotateShape(game, rotation[(*game).current_shape][(*game).current_rotation]);
-
-	printf("%d", rowMax);
 }
-
-
-
 
 #endif // TETRIS_MODEL_H

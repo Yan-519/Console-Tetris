@@ -10,16 +10,8 @@ typedef struct Point
 	short row, col;
 } Point;
 
-Point new_Point(short row, short col)
-{
-	Point p;
-	p.row = row;
-	p.col = col;
-	return p;
-}
-
 Point Add(Point a, Point b) {
-	return new_Point(a.row + b.row, a.col + b.col);
+	return (Point) { a.row + b.row, a.col + b.col };
 }
 
 bool Equals(Point a, Point b) {

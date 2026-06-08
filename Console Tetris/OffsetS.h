@@ -3,7 +3,7 @@
 
 #include "Helpers.h"
 
-static const Point rotation[][SHAPES_COUNT][SHAPES_SIZE] =
+static const Point rotation[SHAPES_COUNT-1][SHAPES_COUNT][SHAPES_SIZE] =
 {
 	// I 
 	{

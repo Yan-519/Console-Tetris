@@ -8,6 +8,8 @@ typedef enum TetrisCell
 	Moving
 } TetrisCell;
 
+#define ROTATIONS_COUNT 4
+
 typedef enum Rotation
 {
 	first,

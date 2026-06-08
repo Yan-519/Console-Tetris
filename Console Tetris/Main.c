@@ -61,6 +61,7 @@ int thread_worker(void* arg) {
 			Render((*game));
 		}
 	}
+	printf("Game over");
 
 	return 0;
 }
@@ -109,10 +110,8 @@ int main()
 			break;
 		}
 	}
-	printf("Game over");
 
 	int thread_result;
 	thrd_join(thread_id, &thread_result);
-
-	return 0;
+	return thread_result;
 }
