@@ -1,0 +1,43 @@
+#ifndef HELPERS_H
+#define HELPERS_H
+
+#include <stdbool.h>
+
+#include "Game enums.h"
+
+typedef struct Point
+{
+	short row, col;
+} Point;
+
+typedef struct BoolBoardTuple
+{
+	TetrisCell** board;
+	bool is_can_move;
+} BoolBoardTuple;
+
+Point new_Point(short row, short col)
+{
+	Point p;
+	p.row = row;
+	p.col = col;
+	return p;
+}
+
+Point Add(Point a, Point b) {
+	return new_Point(a.row + b.row, a.col + b.col);
+}
+
+bool Equals(Point a, Point b) {
+	return a.row == b.row && a.col == b.col;
+}
+
+BoolBoardTuple new_BoolBoardTuple(TetrisCell** board, bool is_can_move) {
+	BoolBoardTuple bbt;
+	bbt.board = board;
+	bbt.is_can_move = is_can_move;
+	return bbt;
+}
+
+
+#endif // HELPERS_H
