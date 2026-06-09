@@ -63,11 +63,9 @@ static int thread_worker(void* arg) {
 			Render((*game));
 		}
 	}
-#if _WIN32
-	system("cls");
-#else
-	system("clear");
-#endif
+
+	printf("\033[2J");
+	printf("\033[1;1H");
 	printf("Game over with the score: %d", game->Score);
 
 	return 0;
