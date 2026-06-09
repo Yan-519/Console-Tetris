@@ -29,7 +29,7 @@ typedef struct Tetris
 
 bool GenerateShape(Tetris* game) {
 	Shape new_shape = (Shape)(rand() % SHAPES_COUNT);
-	Point* p = initialazation[new_shape];
+	const Point* p = initialazation[new_shape];
 
 	for (int i = 0; i < SHAPES_SIZE; i++)
 		if (game->board[p[i].row][p[i].col] == Full)
@@ -233,7 +233,7 @@ void Right(TetrisCell*** board)
 		(*board) = tmp;
 }
 
-void RotateShape(Tetris* game, Point* indexes)
+void RotateShape(Tetris* game, const Point* indexes)
 {
 	Point* original = malloc(sizeof(Point) * SHAPES_SIZE);
 	int idx = 0;
