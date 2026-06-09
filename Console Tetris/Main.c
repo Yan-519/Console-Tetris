@@ -7,7 +7,10 @@
 #include "Game enums.h"
 #include "Tetris model.h"
 
-#define INTRVAL 300
+#define INTERVAL 300
+#define MIN_INTERVAL 15
+
+#define SCORE_INFLUENCE_ON_INTERVAL 35
 
 bool IsInUse = false;
 
@@ -56,11 +59,16 @@ static int thread_worker(void* arg) {
 	Tetris* game = (Tetris*)arg;
 
 	clock_t last = clock();
+	int interval = INTERVAL;
 	while (!game->game_over) {
-		if (clock() - last >= INTRVAL) {
+		if (clock() - last >= interval) {
 			last = clock();
 			TimerDown(game);
 			Render((*game));
+
+			interval = INTERVAL - game->Score / SCORE_INFLUENCE_ON_INTERVAL;
+			if (interval < MIN_INTERVAL)
+				interval = MIN_INTERVAL;
 		}
 	}
 
