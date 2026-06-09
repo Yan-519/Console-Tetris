@@ -32,15 +32,15 @@ bool GenerateShape(Tetris* game) {
 	Point* p = initialazation[new_shape];
 
 	for (int i = 0; i < SHAPES_SIZE; i++)
-		if ((*game).board[p[i].row][p[i].col] == Full)
+		if (game->board[p[i].row][p[i].col] == Full)
 			return false;
 
 
 	for (int i = 0; i < SHAPES_SIZE; i++)
-		(*game).board[p[i].row][p[i].col] = Moving;
+		game->board[p[i].row][p[i].col] = Moving;
 
-	(*game).current_rotation = first;
-	(*game).current_shape = new_shape;
+	game->current_rotation = first;
+	game->current_shape = new_shape;
 
 	return true;
 }
@@ -97,29 +97,29 @@ BoolBoardTuple IsAbleToMove(TetrisCell** board) {
 
 
 void AfterHiteBottom(Tetris* game) {
-	(*game).Score += DeleteLine(&(*game).board);
+	game->Score += DeleteLine(&game->board);
 
 	if (!GenerateShape(game))
-		(*game).game_over = true;
+		game->game_over = true;
 }
 
 void Down(Tetris* game) {
-	BoolBoardTuple bbt = IsAbleToMove((*game).board);
+	BoolBoardTuple bbt = IsAbleToMove(game->board);
 	if (bbt.is_can_move)
-		(*game).board = bbt.board;
+		game->board = bbt.board;
 }
 
 void TimerDown(Tetris* game) {
-	BoolBoardTuple bbt = IsAbleToMove((*game).board);
+	BoolBoardTuple bbt = IsAbleToMove(game->board);
 
 	if (bbt.is_can_move)
-		(*game).board = bbt.board;
+		game->board = bbt.board;
 	else
 	{
 		for (int i = 0; i < ROWS; i++)
 			for (int j = 0; j < COLS; j++)
-				if ((*game).board[i][j] == Moving)
-					(*game).board[i][j] = Full;
+				if (game->board[i][j] == Moving)
+					game->board[i][j] = Full;
 
 		AfterHiteBottom(game);
 	}
@@ -130,16 +130,16 @@ void FullDown(Tetris* game)
 	BoolBoardTuple bbt;
 	do
 	{
-		bbt = IsAbleToMove((*game).board);
+		bbt = IsAbleToMove(game->board);
 
 		if (bbt.is_can_move)
-			(*game).board = bbt.board;
+			game->board = bbt.board;
 	} while (bbt.is_can_move);
 
 	for (int i = 0; i < ROWS; i++)
 		for (int j = 0; j < COLS; j++)
-			if ((*game).board[i][j] == Moving)
-				(*game).board[i][j] = Full;
+			if (game->board[i][j] == Moving)
+				game->board[i][j] = Full;
 
 	AfterHiteBottom(game);
 }
@@ -239,7 +239,7 @@ void RotateShape(Tetris* game, Point* indexes)
 	int idx = 0;
 	for (int row = 0; row < ROWS; row++)
 		for (int col = 0; col < COLS; col++)
-			if ((*game).board[row][col] == Moving)
+			if (game->board[row][col] == Moving)
 				original[idx++] = (Point){ row, col };
 
 	if (idx != SHAPES_SIZE)
@@ -270,25 +270,25 @@ void RotateShape(Tetris* game, Point* indexes)
 			if (Equals(t, original[j]))
 				isOriginal = true;
 
-		if (!isOriginal && (*game).board[t.row][t.col] != Empty)
+		if (!isOriginal && game->board[t.row][t.col] != Empty)
 			return;
 	}
 
-	TetrisCell** tmp = CopyBoard((*game).board);
+	TetrisCell** tmp = CopyBoard(game->board);
 	for (int i = 0; i < SHAPES_SIZE; i++)
 		tmp[original[i].row][original[i].col] = Empty;
 
 	for (int i = 0; i < SHAPES_SIZE; i++)
 		tmp[targets[i].row][targets[i].col] = Moving;
 
-	(*game).board = tmp;
-	(*game).current_rotation = (Rotation)(((int)(*game).current_rotation + 1) % ROTATIONS_COUNT);
+	game->board = tmp;
+	game->current_rotation = (Rotation)(((int)game->current_rotation + 1) % ROTATIONS_COUNT);
 }
 
 
 void Rotate(Tetris* game)
 {
-	if ((*game).current_shape == O)
+	if (game->current_shape == O)
 		return;
 
 	int idx = 0;
@@ -298,7 +298,7 @@ void Rotate(Tetris* game)
 	{
 		for (int j = 0; j < COLS && idx < SHAPES_SIZE; j++)
 		{
-			if ((*game).board[i][j] == Moving)
+			if (game->board[i][j] == Moving)
 			{
 				if (i < rowMin || rowMin == -1)
 					rowMin = i;
@@ -318,21 +318,21 @@ void Rotate(Tetris* game)
 	}
 
 
-	if ((*game).current_shape == I) // special range
+	if (game->current_shape == I) // special range
 	{
 		if (
-			(*game).current_rotation == first && 0 < rowMin && rowMax < ROWS - 2 ||
-			(*game).current_rotation == second && 1 < colMin && colMax < COLS - 1 ||
-			(*game).current_rotation == third && 1 < rowMin && rowMax < ROWS - 1 ||
-			(*game).current_rotation == fourth && 0 < colMin && colMax < COLS - 2)
-			RotateShape(game, rotation[(*game).current_shape][(*game).current_rotation]);
+			game->current_rotation == first && 0 < rowMin && rowMax < ROWS - 2 ||
+			game->current_rotation == second && 1 < colMin && colMax < COLS - 1 ||
+			game->current_rotation == third && 1 < rowMin && rowMax < ROWS - 1 ||
+			game->current_rotation == fourth && 0 < colMin && colMax < COLS - 2)
+			RotateShape(game, rotation[game->current_shape][game->current_rotation]);
 	}
 	else if (
-		(*game).current_rotation == first && rowMax < ROWS - 1 ||
-		(*game).current_rotation == second && 0 < colMin ||
-		(*game).current_rotation == third && 0 < rowMin ||
-		(*game).current_rotation == fourth && colMax < COLS - 1)
-		RotateShape(game, rotation[(*game).current_shape][(*game).current_rotation]);
+		game->current_rotation == first && rowMax < ROWS - 1 ||
+		game->current_rotation == second && 0 < colMin ||
+		game->current_rotation == third && 0 < rowMin ||
+		game->current_rotation == fourth && colMax < COLS - 1)
+		RotateShape(game, rotation[game->current_shape][game->current_rotation]);
 }
 
 #endif // TETRIS_MODEL_H

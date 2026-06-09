@@ -56,14 +56,19 @@ static int thread_worker(void* arg) {
 	Tetris* game = (Tetris*)arg;
 
 	clock_t last = clock();
-	while (!(*game).game_over) {
+	while (!game->game_over) {
 		if (clock() - last >= INTRVAL) {
 			last = clock();
 			TimerDown(game);
 			Render((*game));
 		}
 	}
-	printf("Game over");
+#if _WIN32
+	system("cls");
+#else
+	system("clear");
+#endif
+	printf("Game over with the score: %d", game->Score);
 
 	return 0;
 }
