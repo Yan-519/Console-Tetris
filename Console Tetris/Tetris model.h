@@ -24,7 +24,7 @@ typedef struct Tetris
 
 
 #define ROWS 20    
-#define COLS 20
+#define COLS 10
 
 #define SCORE_PER_LINE 100
 #define SCORE_PER_TETRIS 800
