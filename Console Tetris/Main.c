@@ -107,20 +107,20 @@ int main()
 			break;
 
 		case 72:
-			Rotate(&game);
-			Render(&game);
+			if (Rotate(&game))
+				Render(&game);
 			break;
 		case 80:
-			Down(&game);
-			Render(&game);
+			if (Down(&game))
+				Render(&game);
 			break;
 		case 75:
-			Left(&game.board);
-			Render(&game);
+			if (Left(&game))
+				Render(&game);
 			break;
 		case 77:
-			Right(&game.board);
-			Render(&game);
+			if (Right(&game))
+				Render(&game);
 			break;
 		}
 	}
