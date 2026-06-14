@@ -14,14 +14,14 @@
 
 bool IsInUse = false;
 
-static void Render(Tetris game)
+static void Render(Tetris* game)
 {
 	if (IsInUse) return;
 	IsInUse = true;
 
-	printf("\033[1;1H");
+	printf("\033[H");
 
-	TetrisCell** board = game.board;
+	TetrisCell** board = game->board;
 
 	for (int r = 0; r < ROWS; r++)
 	{
@@ -41,7 +41,7 @@ static void Render(Tetris game)
 		printf("|");
 
 		if (r == 0)
-			printf("      Score: %d", game.Score);
+			printf("      Score: %d", game->Score);
 
 		printf("\n");
 	}
@@ -64,7 +64,7 @@ static int thread_worker(void* arg) {
 		if (clock() - last >= interval) {
 			last = clock();
 			TimerDown(game);
-			Render((*game));
+			Render(game);
 
 			interval = INTERVAL - game->Score / SCORE_INFLUENCE_ON_INTERVAL;
 			if (interval < MIN_INTERVAL)
@@ -72,9 +72,7 @@ static int thread_worker(void* arg) {
 		}
 	}
 
-	printf("\033[2J");
-	printf("\033[1;1H");
-	printf("Game over with the score: %d", game->Score);
+	printf("Game over\n");
 
 	return 0;
 }
@@ -94,7 +92,7 @@ int main()
 	thrd_t thread_id;
 
 	Tetris game = new_tetris();
-	Render(game);
+	Render(&game);
 
 	if (thrd_create(&thread_id, thread_worker, &game) != thrd_success) {
 		fprintf(stderr, "Error creating thread\n");
@@ -105,24 +103,24 @@ int main()
 		switch (_getch()) {
 		case ' ':
 			FullDown(&game);
-			Render(game);
+			Render(&game);
 			break;
 
 		case 72:
 			Rotate(&game);
-			Render(game);
+			Render(&game);
 			break;
 		case 80:
 			Down(&game);
-			Render(game);
+			Render(&game);
 			break;
 		case 75:
 			Left(&game.board);
-			Render(game);
+			Render(&game);
 			break;
 		case 77:
 			Right(&game.board);
-			Render(game);
+			Render(&game);
 			break;
 		}
 	}

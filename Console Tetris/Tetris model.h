@@ -21,7 +21,7 @@ typedef struct Tetris
 } Tetris;
 
 
-#define ROWS 20
+#define ROWS 20      
 #define COLS 10
 
 #define SCORE_PER_LINE 100
@@ -32,12 +32,12 @@ bool GenerateShape(Tetris* game) {
 	const Point* p = initialazation[new_shape];
 
 	for (int i = 0; i < SHAPES_SIZE; i++)
-		if (game->board[p[i].row][p[i].col] == Full)
+		if (game->board[p[i].row][p[i].col + COLS / 2 - 2] == Full)
 			return false;
 
 
 	for (int i = 0; i < SHAPES_SIZE; i++)
-		game->board[p[i].row][p[i].col] = Moving;
+		game->board[p[i].row][p[i].col + COLS / 2 - 2] = Moving;
 
 	game->current_rotation = first;
 	game->current_shape = new_shape;
