@@ -12,13 +12,12 @@
 typedef struct Tetris
 {
 	TetrisCell** board;
-	int Score;
 
-	int rowMax, rowMin, colMax, colMin;
-
+	Bounds bound;
 	Rotation current_rotation;
 	Shape current_shape;
 
+	int Score;
 	bool game_over;
 } Tetris;
 
@@ -37,26 +36,13 @@ bool GenerateShape(Tetris* game) {
 		if (game->board[p[i].row][p[i].col + COLS / 2 - 2] == Full)
 			return false;
 
-	game->rowMax = -1;
-	game->rowMin = -1;
-	game->colMax = -1;
-	game->colMin = -1;
+	game->bound = DefultBounds();
 
 	for (int i = 0; i < SHAPES_SIZE; i++) {
 		int col = p[i].col + COLS / 2 - 2;
 		game->board[p[i].row][col] = Moving;
 
-		if (p[i].row < game->rowMin || game->rowMin == -1)
-			game->rowMin = p[i].row;
-
-		if (game->rowMax < p[i].row || game->rowMax == -1)
-			game->rowMax = p[i].row;
-
-		if (col < game->colMin || game->colMin == -1)
-			game->colMin = col;
-
-		if (game->colMax < col || game->colMax == -1)
-			game->colMax = col;
+		UpdateBounds(&game->bound, p[i].row, col);
 	}
 
 	game->current_rotation = first;
@@ -98,8 +84,8 @@ TetrisCell** CopyBoard(TetrisCell** board) {
 BoolBoardTuple IsAbleToMove(Tetris* game) {
 	TetrisCell** tmp = CopyBoard(game->board);
 
-	for (int row = game->rowMax; row >= game->rowMin; row--) {
-		for (int col = game->colMin; col <= game->colMax; col++) {
+	for (int row = game->bound.rowMax; row >= game->bound.rowMin; row--) {
+		for (int col = game->bound.colMin; col <= game->bound.colMax; col++) {
 			if (tmp[row][col] == Moving) {
 				if (row == ROWS - 1 || tmp[row + 1][col] == Full)
 					return (BoolBoardTuple) { tmp, false };
@@ -127,8 +113,7 @@ bool Down(Tetris* game) {
 	BoolBoardTuple bbt = IsAbleToMove(game);
 	if (bbt.is_can_move) {
 		game->board = bbt.board;
-		game->rowMax++;
-		game->rowMin++;
+		MoveBoundsDown(&game->bound);
 	}
 	return bbt.is_can_move;
 }
@@ -138,13 +123,12 @@ void TimerDown(Tetris* game) {
 
 	if (bbt.is_can_move) {
 		game->board = bbt.board;
-		game->rowMax++;
-		game->rowMin++;
+		MoveBoundsDown(&game->bound);
 	}
 	else
 	{
-		for (int i = game->rowMin; i <= game->rowMax; i++)
-			for (int j = game->colMin; j <= game->colMax; j++)
+		for (int i = game->bound.rowMin; i <= game->bound.rowMax; i++)
+			for (int j = game->bound.colMin; j <= game->bound.colMax; j++)
 				if (game->board[i][j] == Moving)
 					game->board[i][j] = Full;
 
@@ -161,13 +145,12 @@ void FullDown(Tetris* game)
 
 		if (bbt.is_can_move) {
 			game->board = bbt.board;
-			game->rowMax++;
-			game->rowMin++;
+			MoveBoundsDown(&game->bound);
 		}
 	} while (bbt.is_can_move);
 
-	for (int i = game->rowMin; i <= game->rowMax; i++)
-		for (int j = game->colMin; j <= game->colMax; j++)
+	for (int i = game->bound.rowMin; i <= game->bound.rowMax; i++)
+		for (int j = game->bound.colMin; j <= game->bound.colMax; j++)
 			if (game->board[i][j] == Moving)
 				game->board[i][j] = Full;
 
@@ -207,15 +190,15 @@ int DeleteLine(TetrisCell*** board) {
 
 bool Left(Tetris* game)
 {
-	if (game->colMin == 0)
+	if (game->bound.colMin == 0)
 		return false;
 
 	bool is_left = true;
 	TetrisCell** tmp = CopyBoard(game->board);
 
-	for (int i = game->rowMin; i <= game->rowMax; i++)
+	for (int i = game->bound.rowMin; i <= game->bound.rowMax; i++)
 	{
-		for (int j = game->colMin; j <= game->colMax; j++)
+		for (int j = game->bound.colMin; j <= game->bound.colMax; j++)
 		{
 			if (tmp[i][j] == Moving)
 			{
@@ -235,8 +218,7 @@ bool Left(Tetris* game)
 
 	if (is_left) {
 		game->board = tmp;
-		game->colMax--;
-		game->colMin--;
+		MoveBoundsLeft(&game->bound);
 	}
 
 	return is_left;
@@ -244,7 +226,7 @@ bool Left(Tetris* game)
 
 bool Right(Tetris* game)
 {
-	if (game->colMax == ROWS - 1)
+	if (game->bound.colMax == ROWS - 1)
 		return false;
 
 	bool is_right = true;
@@ -272,8 +254,7 @@ bool Right(Tetris* game)
 
 	if (is_right) {
 		game->board = tmp;
-		game->colMax++;
-		game->colMin++;
+		MoveBoundsRight(&game->bound);
 	}
 
 	return is_right;
@@ -324,25 +305,12 @@ void RotateShape(Tetris* game, const Point* indexes)
 	for (int i = 0; i < SHAPES_SIZE; i++)
 		tmp[original[i].row][original[i].col] = Empty;
 
-	game->rowMax = -1;
-	game->rowMin = -1;
-	game->colMax = -1;
-	game->colMin = -1;
+	game->bound = DefultBounds();
 
 	for (int i = 0; i < SHAPES_SIZE; i++) {
 		tmp[targets[i].row][targets[i].col] = Moving;
 
-		if (targets[i].row < game->rowMin || game->rowMin == -1)
-			game->rowMin = targets[i].row;
-
-		if (game->rowMax < targets[i].row || game->rowMax == -1)
-			game->rowMax = targets[i].row;
-
-		if (targets[i].col < game->colMin || game->colMin == -1)
-			game->colMin = targets[i].col;
-
-		if (game->colMax < targets[i].col || game->colMax == -1)
-			game->colMax = targets[i].col;
+		UpdateBounds(&game->bound, targets[i].row, targets[i].col);
 	}
 
 
@@ -359,19 +327,19 @@ bool Rotate(Tetris* game)
 	if (game->current_shape == I) // special range
 	{
 		if (
-			game->current_rotation == first && 0 < game->rowMin && game->rowMax < ROWS - 2 ||
-			game->current_rotation == second && 1 < game->colMin && game->colMax < COLS - 1 ||
-			game->current_rotation == third && 1 < game->rowMin && game->rowMax < ROWS - 1 ||
-			game->current_rotation == fourth && 0 < game->colMin && game->colMax < COLS - 2) {
+			game->current_rotation == first && 0 < game->bound.rowMin && game->bound.rowMax < ROWS - 2 ||
+			game->current_rotation == second && 1 < game->bound.colMin && game->bound.colMax < COLS - 1 ||
+			game->current_rotation == third && 1 < game->bound.rowMin && game->bound.rowMax < ROWS - 1 ||
+			game->current_rotation == fourth && 0 < game->bound.colMin && game->bound.colMax < COLS - 2) {
 			RotateShape(game, rotation[game->current_shape][game->current_rotation]);
 			return true;
 		}
 	}
 	else if (
-		game->current_rotation == first && game->rowMax < ROWS - 1 ||
-		game->current_rotation == second && 0 < game->colMin ||
-		game->current_rotation == third && 0 < game->rowMin ||
-		game->current_rotation == fourth && game->colMax < COLS - 1) {
+		game->current_rotation == first && game->bound.rowMax < ROWS - 1 ||
+		game->current_rotation == second && 0 < game->bound.colMin ||
+		game->current_rotation == third && 0 < game->bound.rowMin ||
+		game->current_rotation == fourth && game->bound.colMax < COLS - 1) {
 		RotateShape(game, rotation[game->current_shape][game->current_rotation]);
 		return true;
 	}
