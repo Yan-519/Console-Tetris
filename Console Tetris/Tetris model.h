@@ -101,9 +101,39 @@ BoolBoardTuple IsAbleToMove(Tetris* game) {
 	return (BoolBoardTuple) { tmp, true };
 }
 
+int DeleteLine(Tetris* game) {
+	int deleted = 0;
+	for (int row = game->bound.rowMax; row >= game->bound.rowMin; row--)
+	{
+		bool isFull = true;
+		for (int col = 0; col < COLS; col++)
+		{
+			if (game->board[row][col] != Full)
+			{
+				isFull = false;
+				break;
+			}
+		}
+
+		if (!isFull)
+			continue;
+
+		deleted++;
+		for (int r = row; r > 0; r--)
+			for (int c = 0; c < COLS; c++)
+				game->board[r][c] = game->board[r - 1][c];
+
+		for (int c = 0; c < COLS; c++)
+			game->board[0][c] = Empty;
+
+		row++;
+	}
+
+	return deleted == SHAPES_SIZE ? SCORE_PER_TETRIS : deleted * SCORE_PER_LINE;
+}
 
 void AfterHiteBottom(Tetris* game) {
-	game->Score += DeleteLine(&game->board);
+	game->Score += DeleteLine(game);
 
 	if (!GenerateShape(game))
 		game->game_over = true;
@@ -157,37 +187,6 @@ void FullDown(Tetris* game)
 	AfterHiteBottom(game);
 }
 
-int DeleteLine(TetrisCell*** board) {
-	int deleted = 0;
-	for (int row = ROWS - 1; row >= 0; row--)
-	{
-		bool isFull = true;
-		for (int col = 0; col < COLS; col++)
-		{
-			if ((*board)[row][col] != Full)
-			{
-				isFull = false;
-				break;
-			}
-		}
-
-		if (!isFull)
-			continue;
-
-		deleted++;
-		for (int r = row; r > 0; r--)
-			for (int c = 0; c < COLS; c++)
-				(*board)[r][c] = (*board)[r - 1][c];
-
-		for (int c = 0; c < COLS; c++)
-			(*board)[0][c] = Empty;
-
-		row++;
-	}
-
-	return deleted == SHAPES_SIZE ? SCORE_PER_TETRIS : deleted * SCORE_PER_LINE;
-}
-
 bool Left(Tetris* game)
 {
 	if (game->bound.colMin == 0)
@@ -232,9 +231,9 @@ bool Right(Tetris* game)
 	bool is_right = true;
 	TetrisCell** tmp = CopyBoard(game->board);
 
-	for (int i = 0; i < ROWS; i++)
+	for (int i = game->bound.rowMin; i <= game->bound.rowMax; i++)
 	{
-		for (int j = COLS - 1; j >= 0; j--)
+		for (int j = game->bound.colMax; j >= game->bound.colMin; j--)
 		{
 			if (tmp[i][j] == Moving)
 			{
@@ -264,8 +263,8 @@ void RotateShape(Tetris* game, const Point* indexes)
 {
 	Point* original = malloc(sizeof(Point) * SHAPES_SIZE);
 	int idx = 0;
-	for (int row = 0; row < ROWS; row++)
-		for (int col = 0; col < COLS; col++)
+	for (int row = game->bound.rowMin; row <= game->bound.rowMax; row++)
+		for (int col = game->bound.colMin; col <= game->bound.colMax; col++)
 			if (game->board[row][col] == Moving)
 				original[idx++] = (Point){ row, col };
 
@@ -302,17 +301,14 @@ void RotateShape(Tetris* game, const Point* indexes)
 	}
 
 	TetrisCell** tmp = CopyBoard(game->board);
-	for (int i = 0; i < SHAPES_SIZE; i++)
-		tmp[original[i].row][original[i].col] = Empty;
-
 	game->bound = DefultBounds();
 
 	for (int i = 0; i < SHAPES_SIZE; i++) {
+		tmp[original[i].row][original[i].col] = Empty;
 		tmp[targets[i].row][targets[i].col] = Moving;
 
 		UpdateBounds(&game->bound, targets[i].row, targets[i].col);
 	}
-
 
 	game->board = tmp;
 	game->current_rotation = (Rotation)(((int)game->current_rotation + 1) % ROTATIONS_COUNT);
